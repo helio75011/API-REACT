@@ -1,27 +1,29 @@
-// Importation de la bibliothèque Express
-const express = require('express');
-
 // Chargement des variables d'environnement depuis le fichier .env
 require('dotenv').config();
+
+// Importation de la bibliothèque Express
+const express = require('express');
 
 // Définition du port sur lequel le serveur doit écouter, avec une valeur par défaut de 5000 si non spécifiée dans les variables d'environnement
 const PORT = process.env.PORT || 5000;
 
 // Création d'une application Express
 const app = express();
-
 // Middleware pour analyser les corps JSON dans les requêtes
 app.use(express.json());
+
 
 // Données simulées pour démontrer l'utilisation d'une base de données
 let data = [
     { id: 1, message: 'Hello World!' }
 ];
 
+
 // Gestionnaire de route pour une requête GET sur '/api/test' pour retourner un simple message
 app.get('/api/test', (_, res) => {
     res.send({ msg: 'Bonjour les amis !' });
 });
+
 
 // GET par ID : Recherche et retourne un élément par son ID depuis les données simulées
 app.get('/api/data/:id', (req, res) => {
@@ -35,6 +37,7 @@ app.get('/api/data/:id', (req, res) => {
     res.send(item);
 });
 
+
 // POST : Ajoute un nouvel élément aux données simulées
 app.post('/api/data', (req, res) => {
     // Extraction du message du corps de la requête
@@ -46,6 +49,7 @@ app.post('/api/data', (req, res) => {
     // Retour du nouvel élément avec un statut 201 (Créé)
     res.status(201).send(newItem);
 });
+
 
 // PATCH : Met à jour le message d'un élément existant par son ID
 app.patch('/api/data/:id', (req, res) => {
@@ -63,6 +67,7 @@ app.patch('/api/data/:id', (req, res) => {
     res.send(item);
 });
 
+
 // DELETE : Supprime un élément par son ID des données simulées
 app.delete('/api/data/:id', (req, res) => {
     // Extraction du paramètre id de l'URL de la requête
@@ -76,6 +81,7 @@ app.delete('/api/data/:id', (req, res) => {
     // Envoie de l'élément supprimé comme réponse
     res.send(deletedItem);
 });
+
 
 // Démarrage du serveur Express sur le PORT défini
 app.listen(PORT, () => {
