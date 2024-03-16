@@ -1,89 +1,52 @@
-// Chargement des variables d'environnement depuis le fichier .env
 require('dotenv').config();
-
-// Importation de la bibliothèque Express
 const express = require('express');
-
-// Définition du port sur lequel le serveur doit écouter, avec une valeur par défaut de 5000 si non spécifiée dans les variables d'environnement
 const PORT = process.env.PORT || 5000;
-
-// Création d'une application Express
 const app = express();
-// Middleware pour analyser les corps JSON dans les requêtes
 app.use(express.json());
 
-
-// Données simulées pour démontrer l'utilisation d'une base de données
-let data = [
-    { id: 1, message: 'Hello World!' }
+// Données simulées pour les utilisateurs
+let users = [
+    { id: 1, name: 'Tania', username: 'floppydiskette' },
+    { id: 2, name: 'Craig', username: 'siliconeidolon' },
+    { id: 3, name: 'Ben', username: 'benisphere' },
 ];
 
-
-// Gestionnaire de route pour une requête GET sur '/api/test' pour retourner un simple message
-app.get('/api/test', (_, res) => {
-    res.send({ msg: 'Bonjour les amis !' });
+app.get('/api/users', (_, res) => {
+    res.send(users);
 });
 
-
-// GET par ID : Recherche et retourne un élément par son ID depuis les données simulées
-app.get('/api/data/:id', (req, res) => {
-    // Extraction du paramètre id de l'URL de la requête
+app.get('/api/users/:id', (req, res) => {
     const { id } = req.params;
-    // Recherche de l'élément dans le tableau data avec l'ID correspondant
-    const item = data.find(d => d.id === parseInt(id));
-    // Si l'élément n'est pas trouvé, retourne une réponse 404 (Non Trouvé)
-    if (!item) return res.status(404).send({ error: 'Élément non trouvé' });
-    // Envoie de l'élément trouvé comme réponse
-    res.send(item);
+    const user = users.find(u => u.id === parseInt(id));
+    if (!user) return res.status(404).send({ error: 'Utilisateur non trouvé' });
+    res.send(user);
 });
 
-
-// POST : Ajoute un nouvel élément aux données simulées
-app.post('/api/data', (req, res) => {
-    // Extraction du message du corps de la requête
-    const { message } = req.body;
-    // Création d'un nouvel élément avec un ID unique et le message fourni
-    const newItem = { id: data.length + 1, message };
-    // Ajout du nouvel élément au tableau data
-    data.push(newItem);
-    // Retour du nouvel élément avec un statut 201 (Créé)
-    res.status(201).send(newItem);
+app.post('/api/users', (req, res) => {
+    const { name, username } = req.body;
+    const user = { id: users.length + 1, name, username };
+    users.push(user);
+    res.status(201).send(user);
 });
 
-
-// PATCH : Met à jour le message d'un élément existant par son ID
-app.patch('/api/data/:id', (req, res) => {
-    // Extraction du paramètre id de l'URL de la requête
+app.put('/api/users/:id', (req, res) => {
     const { id } = req.params;
-    // Extraction du message du corps de la requête
-    const { message } = req.body;
-    // Recherche de l'élément dans le tableau data avec l'ID correspondant
-    const item = data.find(d => d.id === parseInt(id));
-    // Si l'élément n'est pas trouvé, retourne une réponse 404 (Non Trouvé)
-    if (!item) return res.status(404).send({ error: 'Élément non trouvé' });
-    // Mise à jour du message de l'élément
-    item.message = message;
-    // Envoie de l'élément mis à jour comme réponse
-    res.send(item);
+    const { name, username } = req.body;
+    const user = users.find(u => u.id === parseInt(id));
+    if (!user) return res.status(404).send({ error: 'Utilisateur non trouvé' });
+    user.name = name;
+    user.username = username;
+    res.send(user);
 });
 
-
-// DELETE : Supprime un élément par son ID des données simulées
-app.delete('/api/data/:id', (req, res) => {
-    // Extraction du paramètre id de l'URL de la requête
+app.delete('/api/users/:id', (req, res) => {
     const { id } = req.params;
-    // Recherche de l'index de l'élément dans le tableau data
-    const index = data.findIndex(d => d.id === parseInt(id));
-    // Si l'élément n'est pas trouvé, retourne une réponse 404 (Non Trouvé)
-    if (index === -1) return res.status(404).send({ error: 'Élément non trouvé' });
-    // Suppression de l'élément du tableau data et stockage de l'élément supprimé
-    const [deletedItem] = data.splice(index, 1);
-    // Envoie de l'élément supprimé comme réponse
-    res.send(deletedItem);
+    const index = users.findIndex(u => u.id === parseInt(id));
+    if (index === -1) return res.status(404).send({ error: 'Utilisateur non trouvé' });
+    const [deletedUser] = users.splice(index, 1);
+    res.send(deletedUser);
 });
 
-
-// Démarrage du serveur Express sur le PORT défini
 app.listen(PORT, () => {
     console.log(`Serveur en cours d'exécution sur le port : ${PORT}`);
 });
